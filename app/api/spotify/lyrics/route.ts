@@ -1,8 +1,11 @@
 import { getLyricsURL } from '@/lib/genius'
 import { NextRequest, NextResponse } from 'next/server'
 import { load } from 'cheerio'
-import puppeteer from 'puppeteer'
 import { revalidatePath } from 'next/cache'
+import edgeChromium from 'chrome-aws-lambda'
+import puppeteer from 'puppeteer-core'
+
+const LOCAL_CHROME_EXECUTABLE = '/usr/bin/google-chrome'
 
 export async function GET(request: NextRequest) {
   const path = request.nextUrl.searchParams.get('path') || '/'
@@ -29,9 +32,14 @@ export async function GET(request: NextRequest) {
     }
   }
 
+  const executablePath = await edgeChromium.executablePath || LOCAL_CHROME_EXECUTABLE
   let browser
   try {
-    browser = await puppeteer.launch({ headless: 'new' })
+    browser = await puppeteer.launch({
+    executablePath,
+    args: edgeChromium.args,
+    headless: false,
+  })
     const page = await browser.newPage()
     await page.goto(lyricsUrl)
     const html = await page.content()
