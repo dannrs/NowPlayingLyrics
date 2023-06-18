@@ -18,7 +18,6 @@ export const getLyricsURL = async () => {
       headers: {
         Authorization: `Bearer ${access_token}`
       },
-      cache: 'no-store'
     }
   )
 }
