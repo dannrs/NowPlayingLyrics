@@ -37,7 +37,7 @@ export default function Spotify() {
           <NotPlaying song={recentlyPlayed} />
         )}
       </div>
-      <div className='w-2/3'>
+      <div className='flex items-center justify-center w-2/3'>
         {currentSong?.isPlaying? (
         <LyricsComponent />
         ) : (
