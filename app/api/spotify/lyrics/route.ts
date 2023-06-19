@@ -10,30 +10,57 @@ export async function GET(request: NextRequest) {
   // Get artist from currently playing song
   const playing = await currentlyPlaying()
   const song = await playing.json()
-  const artist = song.item.artists.map((artist: any) => artist.name).join(', ').toLowerCase()
-  // const title = song.item.name
+  const artist = song.item.artists
+    .map((artist: any) => artist.name)
+    .join(', ')
+    .toLowerCase()
+  const title = song.item.name.toLowerCase()
 
   // Get Lyrics Url
   const response = await getLyricsURL()
   const lyrics = await response.json()
   const hits = lyrics.response.hits
-  let lyricsUrl = ''
+  let lyricsUrlRo = ''
+  let lyricsUrlKo = ''
+  let lyricsUrlEn = ''
+  let lyricsUrlJa = ''
 
   for (const hit of hits) {
-    if (hit.result.full_title.includes('romanized') || hit.result.language === 'romanization') {
-      lyricsUrl = hit.result.url
-      break
-    } else if (
-      (hit.result.artist_names.toLowerCase() === artist &&
-        (hit.result.language === 'ko') ||
-      hit.result.language === 'en' ||
-      hit.result.language === 'ja')
+    if (
+      hit.result.full_title.toLowerCase().includes(`${artist}`) &&
+      hit.result.full_title.toLowerCase().includes(`${title}`) &&
+      (hit.result.full_title.toLowerCase().includes('romanized') ||
+        hit.result.language === 'romanization')
     ) {
-      if (!lyricsUrl) {
-        lyricsUrl = hit.result.url
-      }
-      }
+      lyricsUrlRo = hit.result.url
+    } else if (
+      hit.result.full_title.toLowerCase().includes(`${artist}`) &&
+      hit.result.full_title.toLowerCase().includes(`${title}`) &&
+      hit.result.language === 'ko'
+    ) {
+      lyricsUrlKo = hit.result.url
+    } else if (
+      hit.result.full_title.toLowerCase().includes(`${artist}`) &&
+      hit.result.full_title.toLowerCase().includes(`${title}`) &&
+      hit.result.language === 'en'
+    ) {
+      lyricsUrlEn = hit.result.url
+    } else if (
+      hit.result.full_title.toLowerCase().includes(`${artist}`) &&
+      hit.result.full_title.toLowerCase().includes(`${title}`) &&
+      hit.result.language === 'ja'
+    ) {
+      lyricsUrlJa = hit.result.url
+    }
   }
 
-  return NextResponse.json({ revalidated: true, lyricsUrl })
+  return NextResponse.json({
+    revalidated: true,
+    artist,
+    title,
+    lyricsUrlRo,
+    lyricsUrlKo,
+    lyricsUrlEn,
+    lyricsUrlJa
+  })
 }
