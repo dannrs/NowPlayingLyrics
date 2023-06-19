@@ -24,12 +24,13 @@ export default function Spotify() {
     <div className="flex flex-col min-h-screen items-center justify-start bg-gray-900 pt-8 font-sans text-white">
       <Image
         className="mb-2 rounded-full"
-        src="/kazuha.jpg"
+        src="/profile.jpg"
         alt="Photo Profile"
         width={128}
         height={128}
       />
-      <div className="mb-4">Kazuha Nakamura</div>
+      <h2>danniramdhani</h2>
+      <p className="text-sm mb-8">Saya mencintai kucing, Linux dan Yorushika.</p>
       <div>
         {currentSong?.isPlaying ? (
           <Playing song={currentSong} />

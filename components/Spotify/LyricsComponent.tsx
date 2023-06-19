@@ -84,7 +84,7 @@ const LyricsComponent = () => {
         </select>
       </div>
       <div className="mb-8 mt-4 pl-4 pr-4 text-center">
-        {lyricsText === '' || lyricsText === '{"error":"Failed"}' ? (
+        {lyricsText === '' || lyricsText === '{"parameters":"lyrics?url="}' ? (
           <p>No lyrics found.</p>
         ) : (
           lyricsText.split('\\n').map((line, index) => (
