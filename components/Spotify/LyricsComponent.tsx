@@ -40,13 +40,20 @@ const LyricsComponent = () => {
           const data = await response.text()
           const deleteQuotes = data.replace(/^"|"$/g, '')
           const formattedLyrics = deleteQuotes.replace(
+            /\((.*?)\)/g,
+            (match, group) => {
+              const withoutNewlines = group.replace(/\\n/g, '')
+              return `[${withoutNewlines}]`
+            }
+          )
+          const formattedLyricsFinal = formattedLyrics.replace(
             /\[(.*?)\]/g,
             (match, group) => {
               const withoutNewlines = group.replace(/\\n/g, '')
               return `[${withoutNewlines}]`
             }
           )
-          setLyricsText(formattedLyrics)
+          setLyricsText(formattedLyricsFinal)
         }
       } catch (error) {
         console.log('Error:', error)
