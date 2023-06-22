@@ -11,9 +11,8 @@ export async function GET(request: NextRequest) {
   const playing = await currentlyPlaying()
   const song = await playing.json()
   const artist = song.item.artists
-    .map((artist: any) => artist.name)
+    .map((artist: any) => artist.name.toLowerCase())
     .join(', ')
-    .toLowerCase()
   const title = song.item.name.toLowerCase()
 
   // Get Lyrics Url
@@ -26,30 +25,17 @@ export async function GET(request: NextRequest) {
   let lyricsUrlJa = ''
 
   for (const hit of hits) {
-    if (
-      hit.result.full_title.toLowerCase().includes(`${artist}`) &&
-      hit.result.full_title.toLowerCase().includes(`${title}`) &&
-      (hit.result.full_title.toLowerCase().includes('romanized') ||
-        hit.result.language === 'romanization')
-    ) {
+    let lang = hit.result.language
+    let url = hit.result.url
+    let hitArtist = hit.result.primary_artist.name.toLowerCase()
+
+    if (url.includes('romanized') || url.includes('romanizations')) {
       lyricsUrlRo = hit.result.url
-    } else if (
-      hit.result.full_title.toLowerCase().includes(`${artist}`) &&
-      hit.result.full_title.toLowerCase().includes(`${title}`) &&
-      hit.result.language === 'ko'
-    ) {
+    } else if (hitArtist.includes(artist) && lang === 'ko') {
       lyricsUrlKo = hit.result.url
-    } else if (
-      hit.result.full_title.toLowerCase().includes(`${artist}`) &&
-      hit.result.full_title.toLowerCase().includes(`${title}`) &&
-      hit.result.language === 'en'
-    ) {
+    } else if (hit.result.url.includes('english') && lang === 'en') {
       lyricsUrlEn = hit.result.url
-    } else if (
-      hit.result.full_title.toLowerCase().includes(`${artist}`) &&
-      hit.result.full_title.toLowerCase().includes(`${title}`) &&
-      hit.result.language === 'ja'
-    ) {
+    } else if (hitArtist.includes(artist) && lang === 'ja') {
       lyricsUrlJa = hit.result.url
     }
   }
